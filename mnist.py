@@ -115,6 +115,16 @@ model_name = "mnist_tinygrad.npz"
   
 #   return model
 
+RESET = "\x1b[0m"
+
+def print_blocks(img):
+  for row in img:
+    line = []
+    for v in row:
+      g = int(v*255)
+      line.append(f"\x1b[48;2;{g};{g};{g}m {RESET}")
+    print("".join(line))
+
 if __name__ == "__main__":
   try:
     model = Model()
@@ -128,12 +138,8 @@ if __name__ == "__main__":
     logits = model(X)
     pred = logits.argmax(axis=1).numpy()[0]
     print(Y.numpy(), pred)
-
-    # print(X.shape)
-    # for cow in X[0]:
-    #   for col in cow:
-    #     print(col, end=' ')
-    #   print()
+    X = X.reshape(28, 28).numpy()
+    print_blocks(X)
 
   except FileNotFoundError:
     X_train, Y_train, X_test, Y_test = pre_data()
@@ -151,12 +157,3 @@ if __name__ == "__main__":
     print("save_weights")
     
   
-
-# save_weights(model, "mnist_tinygrad.npz")
-
-# new_model = Model()
-# load_weights(new_model, "mnist_tinygrad.npz", dev)
-# Tensor.training = False
-# pred = new_model(X_test).argmax(axis=1).numpy()
-# acc_pred = (pred == Y_test).mean()
-# print(f'acc_pred: {acc_pred}')
