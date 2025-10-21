@@ -121,25 +121,38 @@ def print_blocks(img):
   for row in img:
     line = []
     for v in row:
-      g = int(v*255)
-      line.append(f"\x1b[48;2;{g};{g};{g}m {RESET}")
-    print("".join(line))
+      g = max(0, min(255, int(v*255)))
+      line.append(f"\x1b[48;2;{g};{g};{g}m  ")
+    print("".join(line) + RESET)
 
+def print_all(img_x):
+  print_blocks(img_x[0].numpy())
+  x = img_x.reshape(1, 1, 28, 28)
+  Tensor.training = False
+  logits = model(x)
+  pred = logits.argmax(axis=1).numpy()[0]
+  print(f"pred:{pred}", end=" ")
+  
 if __name__ == "__main__":
   try:
     model = Model()
     load_weights(model, model_name, dev)
     # print("model is ready")
     _, _, X_test, Y_test = pre_data()
-    X, Y = X_test[50], Y_test[50]
-    # print(X.shape, Y.shape)
-    X = X.reshape(1, 1, 28, 28)
-    Tensor.training = False
-    logits = model(X)
-    pred = logits.argmax(axis=1).numpy()[0]
-    print(Y.numpy(), pred)
-    X = X.reshape(28, 28).numpy()
-    print_blocks(X)
+    # X, Y = X_test[49], Y_test[49]
+    for i in range(100):
+      X, Y = X_test[i], Y_test[i]
+      print_all(X) 
+      print(f"origin value:{Y.numpy()}")
+      
+
+    # img_X = X[0].numpy()
+    # print_blocks(img_X)
+    # X = X.reshape(1, 1, 28, 28)
+    # Tensor.training = False
+    # logits = model(X)
+    # pred = logits.argmax(axis=1).numpy()[0]
+    # print(f"pred:{pred}")
 
   except FileNotFoundError:
     X_train, Y_train, X_test, Y_test = pre_data()
