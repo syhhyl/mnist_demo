@@ -44,15 +44,6 @@ class Model:
     return self.l3(x.flatten(1).dropout(0.5))
     
 
-# X_train, Y_train, X_test, Y_test = pre_data()
-# print(X_train.shape, X_train.dtype, Y_train.shape, Y_train.dtype)
-# model = Model()
-# acc = (model(X_test).argmax(axis=1) == Y_test).mean()
-# print(acc.item())
-
-# optim = nn.optim.Adam(nn.state.get_parameters(model))
-# batch_size = 128
-
 def step():
   Tensor.training = True
   samples = Tensor.randint(batch_size, high=X_train.shape[0])
@@ -61,24 +52,9 @@ def step():
   loss = model(X).sparse_categorical_crossentropy(Y).backward()
   optim.step()
   return loss
-  
-# import timeit
-# timeit.repeat(step, repeat=10, number=1) 
+
 
 jit_step = TinyJit(step)
-# timeit.repeat(jit_step, repeat=5, number=1)
-
-# optim = nn.optim.Adam(nn.state.get_parameters(model))
-# batch_size = 128 
-
-# def Training():
-#   for i in range(7000):
-#     print(1)
-#     loss = jit_step(128, )
-#     if (i+1) % 100 == 0:
-#       Tensor.training = False
-#       acc = (model(X_test).argmax(axis=1) == Y_test).mean().item()
-#       print(f"step {i:4d}, loss {loss.item():.2f}, acc {acc*100.:.2f}%")
 
 def save_weights(model, path):
   np.savez(path,
@@ -100,20 +76,6 @@ def load_weights(model, path, device):
 
 model_name = "mnist_tinygrad.npz"
 
-# def training() :
-#   X_train, Y_train, X_test, Y_test = pre_data()
-#   model = Model()
-#   optim = nn.optim.Adam(nn.state.get_parameters(model))
-#   batch_size = 128 
-#   for i in range(7000):
-#     loss = jit_step()
-#     if (i+1) % 100 == 0:
-#       Tensor.training = False
-#       acc = (model(X_test).argmax(axis=1) == Y_test).mean().item()
-#       print(f"step {i:4d}, loss {loss.item():.2f}, acc {acc*100.:.2f}%")
-#       Tensor.training = True
-  
-#   return model
 
 RESET = "\x1b[0m"
 
@@ -140,19 +102,10 @@ if __name__ == "__main__":
     # print("model is ready")
     _, _, X_test, Y_test = pre_data()
     # X, Y = X_test[49], Y_test[49]
-    for i in range(100):
+    for i in range(10):
       X, Y = X_test[i], Y_test[i]
       print_all(X) 
-      print(f"origin value:{Y.numpy()}")
-      
-
-    # img_X = X[0].numpy()
-    # print_blocks(img_X)
-    # X = X.reshape(1, 1, 28, 28)
-    # Tensor.training = False
-    # logits = model(X)
-    # pred = logits.argmax(axis=1).numpy()[0]
-    # print(f"pred:{pred}")
+      print(f"raw value:{Y.numpy()}")
 
   except FileNotFoundError:
     X_train, Y_train, X_test, Y_test = pre_data()
